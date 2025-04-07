@@ -41,7 +41,7 @@ function EditQuiz() {
           </div>
 
           {/* Category */}
-          <div className="mb-3" d-flex align-items-center>
+          <div className="mb-3 d-flex align-items-center mt-3" >
             <label className="form-label fw-semibold me-2 mb-0">
               Category:
             </label>
