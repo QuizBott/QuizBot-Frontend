@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import Question from "./Question";
 
 function EditQuiz() {
   return (
@@ -19,30 +20,8 @@ function EditQuiz() {
               </span>
             </div>
 
-            <div className="mb-3 p-3 border rounded bg-white shadow-sm">
-              <h5>❔ Question 1</h5>
-              <p>What is the correct way to define a function in Python?</p>
-              {/* Choices */}
-              <ul>
-                <li>def myFunction(): ✅</li>
-                <li>void myFunction():</li>
-                <li>define myFunction():</li>
-                <li>function myFunction():</li>
-              </ul>
-            </div>
-
-            {/* To Do: Мислам дека овие можеме да ги направиме како посебна компонента(Question) за да биде посреден кодот */}
-            <div className="mb-3 p-3 border rounded bg-white shadow-sm">
-              <h5>❔ Question 2</h5>
-              <p>Which is the correct way to annotate a Repository in Java Spring?</p>
-              {/* Choices */}
-              <ul>
-                <li>@Database</li>
-                <li>@Repository ✅</li>
-                <li>@PostgreSQL</li>
-                <li>@Data</li>
-              </ul>
-            </div>
+            <Question />
+            
             <button className="btn btn-light border d-flex align-items-center">
               ➕ Add answers
             </button>

@@ -3,12 +3,14 @@ import Navbar from './components/Navbar';
 import CreateQuiz from './components/CreateQuiz';
 
 import './index.css';
+import EditQuiz from './components/EditQuiz';
 
 function App() {
 	return (
 		<>
 			<Navbar />
-			<CreateQuiz />
+			<CreateQuiz /> 
+			<EditQuiz />
 		</>
 	);
 }
