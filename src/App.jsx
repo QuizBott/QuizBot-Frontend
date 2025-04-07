@@ -4,13 +4,13 @@ import CreateQuiz from './components/CreateQuiz';
 
 import './index.css';
 import EditQuiz from './components/EditQuiz';
+import QuizStartedV1 from './components/QuizStartedV1';
 
 function App() {
 	return (
 		<>
 			<Navbar />
-			<CreateQuiz /> 
-			<EditQuiz />
+			<QuizStartedV1 /> 
 		</>
 	);
 }
