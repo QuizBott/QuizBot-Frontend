@@ -5,12 +5,13 @@ import CreateQuiz from './components/CreateQuiz';
 import './index.css';
 import EditQuiz from './components/EditQuiz';
 import QuizStartedV1 from './components/QuizStartedV1';
+import Homepage from './components/HomePage';
 
 function App() {
 	return (
 		<>
 			<Navbar />
-			<QuizStartedV1 /> 
+			<Homepage />
 		</>
 	);
 }
