@@ -1,4 +1,5 @@
 import "bootstrap";
+import { Link } from "react-router-dom";
 
 function Login() {
   return (
@@ -40,7 +41,7 @@ function Login() {
             Log In
           </button>
           <div className="text-center">
-            <small className="text-decoration-underline">Don't have an account? <a href='#'className="text-black">Register</a></small>
+            <small className="text-decoration-underline">Don't have an account? <Link to='/register' className="text-black">Register</Link></small>
           </div>
         </form>
       </div>
