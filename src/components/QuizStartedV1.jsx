@@ -105,7 +105,7 @@ const QuizStartedV1 = () => {
                 </ListGroup>
   
                 <Button variant="success" onClick={goToNextQuestion}>
-                  Submit Answer
+                  Next Question
                 </Button>
               </Card.Body>
             </Card>
