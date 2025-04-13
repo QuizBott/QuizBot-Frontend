@@ -11,7 +11,8 @@ function App() {
   return (
     <>
       <Navbar />
-      <Login />
+      <EditQuiz />
+      
     </>
   );
 }
