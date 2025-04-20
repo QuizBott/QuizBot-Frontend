@@ -1,7 +1,35 @@
 import "bootstrap";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api"
 
 function Login() {
+
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/auth/login", {
+        email: email,
+        password: password,
+      });
+
+      console.log("Login successful", response.data);
+      setError("");
+      navigate("/home")
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Invalid email or password.");
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div
@@ -9,7 +37,10 @@ function Login() {
         style={{ width: "100%", maxWidth: "400px" }}
       >
         <h2 className="text-center mb-4"><b>Log In</b></h2>
-        <form>
+
+        {error && <div className="alert alert-danger">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -19,6 +50,8 @@ function Login() {
               className="form-control"
               id="email"
               placeholder="Enter you email here"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-2">
@@ -30,6 +63,8 @@ function Login() {
               className="form-control"
               id="password"
               placeholder="Enter your password here"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="text-start mb-3 mt-4">

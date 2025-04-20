@@ -1,120 +1,314 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from '../css/CreateQuiz.module.css';
+import api from "../api"
+
 function CreateQuiz() {
-	return (
-		<div className="container mt-5 ">
-			<div className="text-center mb-4">
-				<h1 className="fw-bold">Generate quiz with QuizBot</h1>
-			</div>
+    const navigate = useNavigate();
 
-			<div className="row">
-				<div className="col-md-6">
-					<label className="form-label">Quiz name:</label>
-					<input
-						type="text"
-						className="form-control"
-						placeholder="Name of the quiz"
-					/>
-				</div>
-				<div className="col-md-6">
-					<label className="form-label">Quiz description:</label>
-					<textarea
-						className="form-control"
-						placeholder="Description of the quiz"
-					></textarea>
-				</div>
-			</div>
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [duration, setDuration] = useState('');
+    const [category, setCategory] = useState('Programming');
+    const [numberAttempts, setNumberAttempts] = useState('');
+    const [currentTag, setCurrentTag] = useState('');
+    const [tags, setTags] = useState([]);
+    const [singleAnswerQuestions, setSingleAnswerQuestions] = useState('');
+    const [multiAnswerQuestions, setMultiAnswerQuestions] = useState('');
+    const [promptText, setPromptText] = useState('');
+    const [image, setImage] = useState(null);
+    const [documents, setDocuments] = useState([]);
 
-			<div className="row mt-3">
-				<div className="col-md-6">
-					<label className="form-label">Choose and image for the quiz:</label>
-					<div className="w-100">
-						<label
-							htmlFor="docUpload"
-							className="btn btn-outline-dark w-100 text-start"
-						>
-							Upload Files
-						</label>
-						<input
-							type="file"
-							id="docUpload"
-							multiple
-							style={{ display: 'none' }}
-							onChange={(e) => {
-								const selected = Array.from(e.target.files)
-									.map((f) => f.name)
-									.join(', ');
-								alert(`You selected: ${selected}`);
-							}}
-						/>
-					</div>
-				</div>
-				<div className="col-md-6">
-					<label className="form-label">
-						Choose documents needed for the subject of the quiz:
-					</label>
-					<div className="w-100">
-						<label
-							htmlFor="docUpload"
-							className="btn btn-outline-dark w-100 text-start"
-						>
-							Upload Files
-						</label>
-						<input
-							type="file"
-							id="docUpload"
-							multiple
-							style={{ display: 'none' }}
-							onChange={(e) => {
-								const selected = Array.from(e.target.files)
-									.map((f) => f.name)
-									.join(', ');
-								alert(`You selected: ${selected}`);
-							}}
-						/>
-					</div>
-				</div>
-			</div>
+    const handleAddTag = (e) => {
+        e.preventDefault();
+        if (currentTag && !tags.includes(currentTag)) {
+            setTags([...tags, currentTag]);
+            setCurrentTag('');
+        }
+    };
 
-			<div className="row mt-3">
-				<div className="col-md-6">
-					<label className="form-label">
-						Choose number of single-answer questions:
-					</label>
-					<input
-						type="number"
-						className="form-control"
-						min="1"
-						max="20"
-						placeholder="1-20"
-					/>
-				</div>
-				<div className="col-md-6">
-					<label className="form-label">Choose a category for the quiz:</label>
-					<select className="form-select">
-						<option>Programming</option>
-						<option>Math</option>
-						<option>Science</option>
-						<option>History</option>
-					</select>
-				</div>
-			</div>
+    const removeTag = (tagToRemove) => {
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    };
 
-			<div className="mt-3 d-flex justify-content-center row">
-				<div className="d-flex justify-content-center">
-					<label className="form-label">Send a prompt to the model</label>
-				</div>
+    const handleImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            setImage(file);
+            console.log("Image selected:", file.name);
+            event.target.value = null;
+        }
+    };
 
-				<textarea
-					className="form-control"
-					style={{ width: '50vh', height: '100px' }}
-					placeholder="Generate easy questions for my students from the documents I sent you..."
-				></textarea>
-			</div>
+    const removeImage = () => {
+        setImage(null);
+    }
 
-			<div className="text-center mt-4">
-				<button className="btn btn-dark">Generate quiz</button>
-			</div>
-		</div>
-	);
+    const handleDocumentChange = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const newFiles = Array.from(event.target.files);
+            setDocuments(prevDocs => [...prevDocs, ...newFiles]);
+            console.log("Documents selected:", newFiles.map(f => f.name));
+            event.target.value = null;
+        }
+    };
+
+    const removeDocument = (docToRemove) => {
+        setDocuments(documents.filter(doc => doc.name !== docToRemove.name));
+    };
+
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const quizData = {
+            name: name,
+            description: description,
+            duration: parseInt(duration, 10) || 0,
+            category: category,
+            numberAttempts: parseInt(numberAttempts, 10) || 1,
+            tags: tags.map(tag => ({ name: tag.startsWith('#') ? tag.substring(1) : tag })),
+            singleAnswerQuestions: parseInt(singleAnswerQuestions, 10) || 0,
+            multiAnswerQuestions: parseInt(multiAnswerQuestions, 10) || 0,
+            promptText: promptText
+        };
+
+        const formData = new FormData();
+
+        formData.append('quiz', JSON.stringify(quizData));
+
+        if (image) {
+            formData.append('image', image, image.name);
+        }
+
+        if (documents.length > 0) {
+            formData.append('file', documents[0], documents[0].name);
+            if (documents.length > 1) {
+                console.warn("Multiple documents selected, but endpoint currently configured for only one ('file'). Sending only the first document.");
+            }
+        } else {
+            console.warn("No document selected for the 'file' part.");
+        }
+
+
+
+        try {
+            const response = await api.post("/quiz/generate/gemini", formData);
+            console.log('Quiz generation successful:', response.data);
+            navigate("/edit");
+        } catch (error) {
+            if (error.response) {
+                console.error('Quiz generation failed:', error.response.status, error.response.statusText, error.response.data);
+                alert(`Quiz generation failed: ${error.response.status} ${error.response.statusText}\n${error.response.data}`);
+            } else {
+                console.error('Network or other error during quiz generation:', error);
+                alert(`An error occurred: ${error.message}`);
+            }
+        }
+    };
+
+
+
+    return (
+        <div className={styles.createQuizContainer}>
+            <div className="text-center mb-4">
+                <h1 className="fw-bold">Create Quiz</h1>
+            </div>
+            <form className={styles.quizForm} onSubmit={handleSubmit}>
+                {/* Left Column */}
+                <div className={`${styles.formColumn} ${styles.formLeftColumn}`}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="name">Quiz Name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Enter quiz name..."
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="category">Category</label>
+                        <select
+                            id="category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            required
+                        >
+                            <option value="Programming">Programming</option>
+                            <option value="Science">Science</option>
+                            <option value="Math">History</option>
+                        </select>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="tags">Tags</label>
+                        <div className={styles.tagsInputContainer}>
+                            <input
+                                type="text"
+                                id="tags"
+                                value={currentTag}
+                                onChange={(e) => setCurrentTag(e.target.value)}
+                                placeholder="Add a tag..."
+                                required
+                            />
+                            <button type="button" onClick={handleAddTag} className={styles.addTagButton}>+</button>
+                        </div>
+                        <div className={styles.tagsDisplayArea}>
+                            {tags.map((tag) => (
+                                <span key={tag} className={styles.tagItem}>
+                                    {tag}
+                                    <button type="button" onClick={() => removeTag(tag)} className={styles.removeTagButton}>×</button>
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="description">Description</label>
+                        <input
+                            type="text"
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Enter description..."
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="singleAnswerQuestions">Single-Answer Questions</label>
+                        <input
+                            type="number"
+                            id="singleAnswerQuestions"
+                            value={singleAnswerQuestions}
+                            onChange={(e) => setSingleAnswerQuestions(e.target.value)}
+                            placeholder="Enter number..."
+                            min="0"
+                            required
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="multiAnswerQuestions">Multiple-Answer Questions</label>
+                        <input
+                            type="number"
+                            id="multiAnswerQuestions"
+                            value={multiAnswerQuestions}
+                            onChange={(e) => setMultiAnswerQuestions(e.target.value)}
+                            placeholder="Enter number..."
+                            min="0"
+                            required
+                        />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: "15px" }}>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="duration">Duration</label>
+                            <input
+                                type="number"
+                                id="duration"
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                                placeholder="Enter number..."
+                                min="0"
+                                required
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label htmlFor="numberAttempts">Number of Attempts</label>
+                            <input
+                                type="number"
+                                id="numberAttempts"
+                                value={numberAttempts}
+                                onChange={(e) => setNumberAttempts(e.target.value)}
+                                placeholder="Enter number..."
+                                min="0"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* Right Column */}
+                <div className={`${styles.formColumn} ${styles.formRightColumn}`}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="imageInput">Quiz Image</label>
+                        <div className={`${styles.uploadPlaceholder} ${styles.imagePlaceholder}`} onClick={() => document.getElementById('imageInput').click()}>
+                            {image ? (
+                                <div className={styles.imagePreviewContainer}>
+                                    <img
+                                        src={URL.createObjectURL(image)}
+                                        alt="Quiz Preview"
+                                        className={styles.imagePreview}
+                                    />
+                                    <span className={styles.fileNameDisplay}>{image.name}</span>
+                                </div>
+                            ) : (
+                                <span>Click to upload Image</span>
+                            )}
+                        </div>
+                        <input
+                            type="file"
+                            id="imageInput"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            style={{ display: 'none' }}
+                            required
+                        />
+                        {image && <button type="button" className={styles.removeFileButton} onClick={removeImage}>Remove Image</button>}
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="prompt">Prompt</label>
+                        <textarea
+                            id="prompt"
+                            value={promptText}
+                            onChange={(e) => setPromptText(e.target.value)}
+                            placeholder="Generate easy questions for my students from the documents I sent you..."
+                            rows="5"
+                        />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                        <label htmlFor="documentInput">Add Documents</label>
+                        <div className={`${styles.uploadPlaceholder} ${styles.documentPlaceholder}`} onClick={() => document.getElementById('documentInput').click()}>
+                            Click to upload Documents (PDF, DOCX, etc.)
+                        </div>
+                        <input
+                            type="file"
+                            id="documentInput"
+                            multiple
+                            accept=".pdf,.doc,.docx,.txt"
+                            onChange={handleDocumentChange}
+                            style={{ display: 'none' }}
+                            required
+                        />
+                        <div className={styles.documentList}>
+                            {documents.map((doc, index) => (
+                                <div key={index} className={styles.docItem}>
+                                    <span>📄 {doc.name}</span>
+                                    <button type="button" className={styles.removeDocButton} onClick={() => removeDocument(doc)}>×</button>
+                                </div>
+                            ))}
+                            {documents.length === 0 && (
+                                <div className={`${styles.docItem} ${styles.exampleDoc}`}>
+                                    <span>📄 Doc1.pdf (Example)</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.formSubmitArea}>
+                    <button type="submit" className={styles.submitButton}>Submit</button>
+                </div>
+            </form>
+        </div>
+    );
 }
+
 export default CreateQuiz;

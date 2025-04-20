@@ -1,7 +1,45 @@
 import "bootstrap";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api"
 
 function Register() {
+
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (password !== repeatPassword) {
+            setError("Passwords do not match!");
+            return;
+        }
+
+        try {
+        const response = await api.post("/auth/register", {
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        });
+
+        console.log("Register successful", response.data);
+        setError("");
+        navigate("/")
+        } catch (err) {
+        console.error("Register error:", err);
+        setError("Registration faild");
+        }
+    };
+
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <div
@@ -9,7 +47,38 @@ function Register() {
                 style={{ width: "100%", maxWidth: "400px" }}
             >
                 <h2 className="text-center mb-4"><b>Register</b></h2>
-                <form>
+                
+                {error && <div className="alert alert-danger">{error}</div>}
+
+                <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                        <label htmlFor="firstName" className="form-label">
+                            First Name
+                        </label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="firstName"
+                            placeholder="Enter your first name"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label htmlFor="lastName" className="form-label">
+                            Last Name
+                        </label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="lastName"
+                            placeholder="Enter your last name"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                        />
+                    </div>
+
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">
                             Email
@@ -19,6 +88,8 @@ function Register() {
                             className="form-control"
                             id="email"
                             placeholder="Enter your email here"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
 
@@ -31,6 +102,8 @@ function Register() {
                             className="form-control"
                             id="password"
                             placeholder="Enter your password here"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
@@ -43,6 +116,8 @@ function Register() {
                             className="form-control"
                             id="repeatPassword"
                             placeholder="Repeat your password"
+                            value={repeatPassword}
+                            onChange={(e) => setRepeatPassword(e.target.value)}
                         />
                     </div>
 
