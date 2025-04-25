@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import './index.css';
 import EditQuiz from './components/EditQuiz';
 import QuizStartedV1 from './components/QuizStartedV1';
+import QuizStartedV2 from './components/QuizStartedV2';
 import Homepage from './components/HomePage';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -22,6 +23,7 @@ function App() {
 				<Route path="/create" element={<CreateQuiz />} />
 				<Route path="/edit" element={<EditQuiz />} />
 				<Route path="/started" element={<QuizStartedV1 />} />
+				<Route path="/started2" element={<QuizStartedV2 />} />
 			</Routes>
 		</Router>
 	);
