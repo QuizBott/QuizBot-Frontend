@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../assets/LogoQuiz.png';
 function Navbar() {
 	return (
-		<nav className="navbar px-3" style={{ backgroundColor: 'white' }}>
+		<nav className="navbar px-3" style={{ backgroundColor: 'white', position: "absolute", top: "0" }}>
 			<div className="container-fluid">
 				<div className="d-flex align-items-center">
 					<img

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/CreateQuiz.module.css';
 import api from "../api"
+import Loader from '../components/Loader';
 
 function CreateQuiz() {
     const navigate = useNavigate();
@@ -18,6 +19,9 @@ function CreateQuiz() {
     const [promptText, setPromptText] = useState('');
     const [image, setImage] = useState(null);
     const [documents, setDocuments] = useState([]);
+
+    const [loading, setLoading] = useState(false);
+
 
     const handleAddTag = (e) => {
         e.preventDefault();
@@ -61,6 +65,8 @@ function CreateQuiz() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        setLoading(true);
+
         const quizData = {
             name: name,
             description: description,
@@ -95,8 +101,9 @@ function CreateQuiz() {
         try {
             const response = await api.post("/quiz/generate/gemini", formData);
             console.log('Quiz generation successful:', response.data);
-            navigate("/edit");
+            navigate("/edit", { state: { data: response.data } });
         } catch (error) {
+            setLoading(false);
             if (error.response) {
                 console.error('Quiz generation failed:', error.response.status, error.response.statusText, error.response.data);
                 alert(`Quiz generation failed: ${error.response.status} ${error.response.statusText}\n${error.response.data}`);
@@ -152,7 +159,6 @@ function CreateQuiz() {
                                 value={currentTag}
                                 onChange={(e) => setCurrentTag(e.target.value)}
                                 placeholder="Add a tag..."
-                                required
                             />
                             <button type="button" onClick={handleAddTag} className={styles.addTagButton}>+</button>
                         </div>
@@ -257,7 +263,6 @@ function CreateQuiz() {
                             accept="image/*"
                             onChange={handleImageChange}
                             style={{ display: 'none' }}
-                            required
                         />
                         {image && <button type="button" className={styles.removeFileButton} onClick={removeImage}>Remove Image</button>}
                     </div>
@@ -285,7 +290,6 @@ function CreateQuiz() {
                             accept=".pdf,.doc,.docx,.txt"
                             onChange={handleDocumentChange}
                             style={{ display: 'none' }}
-                            required
                         />
                         <div className={styles.documentList}>
                             {documents.map((doc, index) => (
@@ -304,7 +308,13 @@ function CreateQuiz() {
                 </div>
 
                 <div className={styles.formSubmitArea}>
-                    <button type="submit" className={styles.submitButton}>Submit</button>
+                    {!loading ? (
+                        <button type="submit" className="btn btn-dark px-5 rounded-pill mb-3">
+                            Submit
+                        </button>
+                    ) : (
+                        <Loader />
+                    )}
                 </div>
             </form>
         </div>

@@ -1,0 +1,14 @@
+.editableHeadingInput {
+    font-size: 2.5rem;
+    font-weight: bold;
+    border: none;
+    border-bottom: 2px solid #000;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 8px;
+}
