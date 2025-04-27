@@ -1,27 +1,22 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Logo from "../assets/LogoQuiz.png";
-import { useEffect } from "react";
-import jwt_decode from "jwt-decode";
+import { useEffect, useState } from "react";
+import api from "../api"
+
 function Navbar() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const getJwtToken = () => {
-      const cookies = document.cookie.split(";");
-      for (let cookie of cookies) {
-        if (cookie.trim().startsWith("jwt=")) {
-          return cookie.trim().split("=")[1];
-        }
+    async function fetchUser() {
+      try {
+        const response = await api.get("/user");
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
       }
-      return null;
-    };
-    const token = getJwtToken();
-    if (token) {
-      const decoded = jwt_decode(token);
-      setUser(decoded);
-    } else {
-      setUser(null);
     }
+
+    fetchUser();
   }, []);
 
   return (
@@ -39,7 +34,7 @@ function Navbar() {
           />
           <div className="navbar-brand d-flex flex-column">
             <span className="fw-bold fs-6">Quizzes</span>
-            <span className="fw-bold text-muted fs-6">{user ? user.email : "Loading"}</span>
+            <span className="fw-bold text-muted fs-6">{user ? user.username : "Loading"}</span>
           </div>
         </div>
 
