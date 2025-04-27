@@ -5,7 +5,8 @@ import api from "../api"
 
 function Navbar() {
   const [user, setUser] = useState(null);
-
+  // IF ROLE == "TEACHER" SHOW BUTTON CREATE QUIZ 
+  const [role, setRole] = useState("");
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -16,8 +17,22 @@ function Navbar() {
       }
     }
 
-    fetchUser();
+    const user = fetchUser();
+    if (user) {
+      try {
+        setRole(user.role);
+      }
+      catch (error) {
+        console.error("Failed to fetch user role:", error);
+      }
+    } else {
+
+      console.log("User not found")
+    }
   }, []);
+
+
+
 
   return (
     <nav
