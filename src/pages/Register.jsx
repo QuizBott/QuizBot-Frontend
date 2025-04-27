@@ -36,7 +36,7 @@ function Register() {
         navigate("/")
         } catch (err) {
         console.error("Register error:", err);
-        setError("Registration faild");
+        setError("Registration failed");
         }
     };
 
