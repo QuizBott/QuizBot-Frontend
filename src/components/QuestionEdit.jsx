@@ -1,8 +1,8 @@
 import React from 'react';
-import AnswerEditComponent from './AnswerEditComponent';
+import AnswerEdit from './AnswerEdit';
 import { Trash2 } from 'lucide-react';
 
-export default function QuestionEditComponent({
+export default function QuestionEdit({
   data, index,
   onTypeChange, onPointsChange, onQuestionTextChange,
   onAddAnswer, onDeleteAnswer, onAnswerTextChange,
@@ -27,7 +27,7 @@ export default function QuestionEditComponent({
 
       <p className="p-2">Choices</p>
       {data.answers.map((ans, ai) => (
-        <AnswerEditComponent
+        <AnswerEdit
           key={ai}
           data={ans}
           index={ai}

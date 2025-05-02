@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import QuestionEditComponent from "../components/QuestionEditComponent";
+import { useLocation, useNavigate } from "react-router-dom";
+import QuestionEdit from "../components/QuestionEdit";
 import { Pencil } from 'lucide-react';
 import styles from '../css/EditQuiz.module.css';
 import api from "../api"
@@ -9,6 +9,7 @@ import api from "../api"
 function EditQuiz() {
 
   const location = useLocation();
+  const navigate = useNavigate();
   const initialData = location.state?.data;
 
   const [quizMeta, setQuizMeta] = useState({
@@ -53,13 +54,15 @@ function EditQuiz() {
         image: quizMeta.imageBase64
       };
 
-      await api.post(
+      const response = await api.post(
         "/quiz/create",
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      alert('Quiz saved successfully!');
+      const quizId = response.data.id;
+      navigate(`/quiz/${quizId}/intro`);
+
     } catch (error) {
       console.error('Error saving quiz:', error);
       alert('Error saving quiz');
@@ -74,16 +77,6 @@ function EditQuiz() {
   const handleBlur = () => {
     setIsEditing(false);
   };
-
-  useEffect(() => {
-    console.log("Changes quiz:")
-    console.log(quizMeta)
-  }, [quizMeta]);
-
-  useEffect(() => {
-    console.log("Changes questions:")
-    console.log(questions)
-  }, [questions]);
 
   return (
     <div className="container mt-5">
@@ -118,7 +111,7 @@ function EditQuiz() {
             paddingRight: '15px'
           }}>
           {questions.map((q, idx) => (
-            <QuestionEditComponent
+            <QuestionEdit
               key={idx}
               data={q}
               index={idx}

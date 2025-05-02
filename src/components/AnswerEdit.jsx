@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 
-export default function AnswerEditComponent({ data, index, questionIndex, type, onDelete, onTextChange, onToggle }) {
+export default function AnswerEdit({ data, index, questionIndex, type, onDelete, onTextChange, onToggle }) {
     return (
         <div className="d-flex align-items-center rounded px-3 py-2 mb-2">
             <input

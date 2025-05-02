@@ -5,8 +5,8 @@ import Navbar from './components/Navbar';
 import './index.css';
 
 import EditQuiz from './pages/EditQuiz';
-import QuizStartedV1 from './pages/QuizStartedV1';
-import QuizStartedV2 from './pages/QuizStartedV2';
+import QuizStarted from './pages/QuizStarted';
+import QuizIntroPage from './pages/QuizIntroPage';
 import Homepage from './pages/HomePage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -35,8 +35,8 @@ function Main() {
 				<Route path="/profilescreen" element={<ProfileScreen />} />
 				<Route path="/create" element={<CreateQuiz />} />
 				<Route path="/edit" element={<EditQuiz />} />
-				<Route path="/started" element={<QuizStartedV1 />} />
-				<Route path="/started2" element={<QuizStartedV2 />} />
+				<Route path="/quiz/:id/intro" element={<QuizIntroPage />} />
+				<Route path="/quiz/:id/start" element={<QuizStarted />} />
 			</Routes>
 		</>
 	);
