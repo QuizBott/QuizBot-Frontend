@@ -38,7 +38,7 @@ function Main() {
 				<Route path="/edit" element={<EditQuiz />} />
 				<Route path="/quiz/:id/intro" element={<QuizIntroPage />} />
 				<Route path="/quiz/:id/start" element={<QuizStarted />} />
-				<Route path="/quiz/results" element={<QuizResults />} />
+				<Route path="/results" element={<QuizResults />} />
 			</Routes>
 		</>
 	);

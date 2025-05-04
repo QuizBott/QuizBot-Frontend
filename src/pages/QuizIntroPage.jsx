@@ -44,7 +44,7 @@ const QuizIntroPage = () => {
       }
     };
 
-    fetchQuizInfo();
+    fetchData();
   }, [id]);
 
   const handleStartQuiz = () => {
@@ -71,7 +71,9 @@ const QuizIntroPage = () => {
     return <div>Quiz information not available</div>;
   }
 
-  console.log(quizInfo);
+  // console.log(quizInfo);
+
+  const hasExceededAttempts = true;
 
   return (
     <div className="container py-5 vh-100">
@@ -105,16 +107,23 @@ const QuizIntroPage = () => {
               {/* <div className="text-left mt-4">
                 <button className="btn btn-success px-4" onClick={handleStartQuiz}>Start Quiz</button>
               </div> */}
-              {userRole !== "TEACHER" && (
-                <div className="text-left mt-4">
-                  <button
-                    className="btn btn-success px-4"
-                    onClick={handleStartQuiz}
-                  >
-                    Start Quiz
-                  </button>
-                </div>
-              )}
+              {role !== "TEACHER" && (
+              <div className="text-left mt-4">
+                <button
+                  className="btn btn-success px-4"
+                  onClick={handleStartQuiz}
+                  disabled={hasExceededAttempts}
+                >
+                  Start Quiz
+                </button>
+                {hasExceededAttempts && (
+                  <div className="text-danger mt-2">
+                    You have already attempted this quiz and cannot retake it.
+                  </div>
+                )}
+              </div>
+            )}
+
             </div>
           </div>
         </div>
