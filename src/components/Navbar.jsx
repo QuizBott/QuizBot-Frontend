@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Logo from "../assets/LogoQuiz.png";
 import { useEffect, useState } from "react";
 import api from "../api"
-
+import { Link } from "react-router-dom";
 function Navbar() {
   const [user, setUser] = useState(null);
   // IF ROLE == "TEACHER" SHOW BUTTON CREATE QUIZ 
@@ -52,8 +52,21 @@ function Navbar() {
             <span className="fw-bold text-muted fs-6">{user ? user.username : "Loading"}</span>
           </div>
         </div>
+        
+        <div className="d-flex align-items-center ms-auto gap-3">
+          <Link className="nav-link" to="/home">Home</Link>
+          <Link className="nav-link" to="/profilescreen">Profile</Link>
+          {role === "TEACHER" && (
+            <>
+              <Link className="nav-link" to="/create">Create Quiz</Link>
+              <Link className="nav-link" to="/edit">Edit Quiz</Link>
+            </>
+          )}
+          <Link className="nav-link" to="/">Login</Link>
+          <Link className="nav-link" to="/register">Register</Link>
+        </div>
 
-        <div className="d-flex align-items-center ms-auto">
+        {/* <div className="d-flex align-items-center ms-auto">
           <img
             src={Logo}
             alt="Logo"
@@ -61,7 +74,17 @@ function Navbar() {
             style={{ width: "40px", height: "40px" }}
           />
           <i className="bi bi-person-circle fs-4"></i>
-        </div>
+        </div> */}
+        {user && user.profileImage && (
+          <Link to="/profilescreen" className="ms-3">
+            <img
+              src={user.profileImage}
+              alt="User"
+              className="rounded-circle"
+              style={{ width: "40px", height: "40px", objectFit: "cover", cursor: "pointer" }}
+            />
+          </Link>
+        )}
       </div>
     </nav>
   );
