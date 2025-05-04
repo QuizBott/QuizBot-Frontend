@@ -101,13 +101,7 @@ function CreateQuiz() {
         try {
             const response = await api.post("/quiz/generate/gemini", formData);
             console.log('Quiz generation successful:', response.data);
-            const quizId = response.data?.id;
-            if(quizId){
-                navigate(`/quiz/${quizId}/intro`)
-            }else{
-                console.error("Quiz ID not found in response");
-            }
-            //navigate("/edit", { state: { data: response.data } });
+            navigate("/edit", { state: { data: response.data } });
         } catch (error) {
             setLoading(false);
             if (error.response) {
