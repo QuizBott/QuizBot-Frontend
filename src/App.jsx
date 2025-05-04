@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProfileScreen from './pages/ProfilePage';
 import CreateQuiz from './pages/CreateQuiz';
+import QuizResults from './components/QuizResults';
 
 function App() {
 	return (
@@ -37,6 +38,7 @@ function Main() {
 				<Route path="/edit" element={<EditQuiz />} />
 				<Route path="/quiz/:id/intro" element={<QuizIntroPage />} />
 				<Route path="/quiz/:id/start" element={<QuizStarted />} />
+				<Route path="/quiz/results" element={<QuizResults />} />
 			</Routes>
 		</>
 	);
