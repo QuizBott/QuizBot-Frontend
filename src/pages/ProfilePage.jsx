@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logoQuiz from '../assets/LogoQuiz.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useLocation } from 'react-router-dom';
 
 const quizzes = [
 	{ id: 1, title: 'Quiz #1', subtitle: 'SQL Essentials', score: '14/15' },
@@ -10,7 +11,8 @@ const quizzes = [
 
 const ProfileScreen = () => {
 	const [activeTab, setActiveTab] = useState('quizResults');
-
+	const location = useLocation()
+	const user = location.state?.user;
 	const renderQuizResults = () => (
 		<div className="row px-4">
 			{quizzes.map((quiz) => (
@@ -102,7 +104,7 @@ const ProfileScreen = () => {
 				}}
 			>
 				<img
-					src="https://i.ibb.co/8dsPW3y/profile-placeholder.png"
+					src={user?.profileImage ? user.profileImage : logoQuiz}
 					className="rounded-circle mb-3"
 					alt="profile"
 					width={120}
