@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logoQuiz from '../assets/LogoQuiz.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation } from 'react-router-dom';
+import api from "../api";
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+
 
 const quizzes = [
 	{ id: 1, title: 'Quiz #1', subtitle: 'SQL Essentials', score: '14/15' },
@@ -13,6 +17,30 @@ const ProfileScreen = () => {
 	const [activeTab, setActiveTab] = useState('quizResults');
 	const location = useLocation()
 	const user = location.state?.user;
+
+	const exportQuizToPDF = (quiz) => {
+
+		const response = api.get(`/quiz/${quiz.id}`)
+
+		console.log(response.data)
+
+
+		const doc = new jsPDF();
+
+		// doc.setFontSize(18);
+		// doc.text('Quiz Result', 14, 22);
+
+		// doc.setFontSize(12);
+		// doc.text(`Title: ${quiz.title}`, 14, 40);
+		// doc.text(`Subtitle: ${quiz.subtitle}`, 14, 50);
+		// doc.text(`Score: ${quiz.score}`, 14, 60);
+
+		// // Optional: add image (logoQuiz must be base64 or public path)
+		// // doc.addImage(logoQuiz, 'PNG', 150, 15, 40, 40);
+
+		// doc.save(`${quiz.title}_result.pdf`);
+	};
+
 	const renderQuizResults = () => (
 		<div className="row px-4">
 			{quizzes.map((quiz) => (
@@ -35,7 +63,12 @@ const ProfileScreen = () => {
 							</div>
 							<div className="d-flex justify-content-between align-items-center">
 								<span className="fw-bold">{quiz.score}</span>
-								<button className="btn btn-dark btn-sm">Review Score</button>
+								<button
+									className="btn btn-dark btn-sm"
+									onClick={() => exportQuizToPDF(quiz)}
+								>
+									Export PDF
+								</button>
 							</div>
 						</div>
 					</div>
@@ -43,6 +76,23 @@ const ProfileScreen = () => {
 			))}
 		</div>
 	);
+
+	useEffect(() => {
+
+
+		const fetchData = async () => {
+			try {
+				const response = await api.get(`/quiz/quizAttempted`)
+				console.log(response.data)
+
+			} catch (err) {
+				console.error(err);
+			}
+		};
+
+		fetchData();
+
+	}, []);
 
 	const renderAverageScore = () => (
 		<div className="text-center p-4">
@@ -59,40 +109,6 @@ const ProfileScreen = () => {
 		</div>
 	);
 
-	const renderEditProfile = () => (
-		<div className="p-4">
-			<h4 className="mb-3 text-center">📝 Edit Profile</h4>
-			<form className="mx-auto" style={{ maxWidth: '500px' }}>
-				<div className="mb-3">
-					<label className="form-label">Full Name</label>
-					<input
-						type="text"
-						className="form-control"
-						defaultValue="Vasil Strezov"
-					/>
-				</div>
-				<div className="mb-3">
-					<label className="form-label">Email</label>
-					<input
-						type="email"
-						className="form-control"
-						defaultValue="vasil@example.com"
-					/>
-				</div>
-				<div className="mb-3">
-					<label className="form-label">University</label>
-					<input
-						type="text"
-						className="form-control"
-						defaultValue="Faculty of Computer Science & Engineering"
-					/>
-				</div>
-				<button type="submit" className="btn btn-dark w-100">
-					Save Changes
-				</button>
-			</form>
-		</div>
-	);
 
 	return (
 		<>
@@ -111,7 +127,7 @@ const ProfileScreen = () => {
 					height={120}
 					style={{ border: '4px solid white' }}
 				/>
-				<h2 className="fw-bold">Vasil Strezov</h2>
+				<h2 className="fw-bold">{user.username}</h2>
 				<p className="text-light mb-0">
 					Student at Faculty of Computer Science & Engineering
 				</p>
@@ -119,27 +135,17 @@ const ProfileScreen = () => {
 
 			<div className=" d-flex justify-content-center mb-4">
 				<button
-					className={`btn mx-2 ${
-						activeTab === 'edit' ? 'bg-dark text-white' : 'btn-outline-dark'
-					}`}
-					onClick={() => setActiveTab('edit')}
-				>
-					Edit Profile
-				</button>
-				<button
-					className={`btn mx-2 ${
-						activeTab === 'average' ? 'bg-dark text-white' : 'btn-outline-dark'
-					}`}
+					className={`btn mx-2 ${activeTab === 'average' ? 'bg-dark text-white' : 'btn-outline-dark'
+						}`}
 					onClick={() => setActiveTab('average')}
 				>
 					Average Score
 				</button>
 				<button
-					className={`btn mx-2 ${
-						activeTab === 'quizResults'
-							? 'bg-dark text-white'
-							: 'btn-outline-dark'
-					}`}
+					className={`btn mx-2 ${activeTab === 'quizResults'
+						? 'bg-dark text-white'
+						: 'btn-outline-dark'
+						}`}
 					onClick={() => setActiveTab('quizResults')}
 				>
 					Quiz Results
@@ -148,7 +154,6 @@ const ProfileScreen = () => {
 
 			{activeTab === 'quizResults' && renderQuizResults()}
 			{activeTab === 'average' && renderAverageScore()}
-			{activeTab === 'edit' && renderEditProfile()}
 		</>
 	);
 };
