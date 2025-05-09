@@ -13,20 +13,9 @@ const QuizIntroPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [role, setRole] = useState("");
+  const [hasAttempts, setHasAttempts] = useState(false);
 
   useEffect(() => {
-    // const fetchQuizInfo = async () => {
-    //   try {
-    //     const response = await api.get(`/quiz/${id}/intro`);
-    //     setQuizInfo(response.data);
-    //     setDurationMinutes(response.data.duration.toString().padStart(2, '0'));
-    //   } catch (err) {
-    //     setError(err.response?.data?.message || err.message);
-    //   }
-    //   finally {
-    //     setLoading(false);
-    //   }
-    // };
 
     const fetchData = async () => {
       try {
@@ -34,6 +23,11 @@ const QuizIntroPage = () => {
           api.get(`/quiz/${id}/intro`),
           api.get("/user"),
         ]);
+
+        const quizAttemptsRes = await api.get(`/quiz/${id}/attempts`);
+        setHasAttempts(!quizAttemptsRes.data);
+
+
         setQuizInfo(quizRes.data);
         setDurationMinutes(quizRes.data.duration.toString().padStart(2, "0"));
         setRole(userRes.data.role);
@@ -71,10 +65,6 @@ const QuizIntroPage = () => {
     return <div>Quiz information not available</div>;
   }
 
-  // console.log(quizInfo);
-
-  const hasExceededAttempts = true;
-
   return (
     <div className="container py-5 vh-100">
       <h2 className="text-center fw-bold mb-5">{quizInfo.name}</h2>
@@ -108,21 +98,21 @@ const QuizIntroPage = () => {
                 <button className="btn btn-success px-4" onClick={handleStartQuiz}>Start Quiz</button>
               </div> */}
               {role !== "TEACHER" && (
-              <div className="text-left mt-4">
-                <button
-                  className="btn btn-success px-4"
-                  onClick={handleStartQuiz}
-                  disabled={hasExceededAttempts}
-                >
-                  Start Quiz
-                </button>
-                {hasExceededAttempts && (
-                  <div className="text-danger mt-2">
-                    You have already attempted this quiz and cannot retake it.
-                  </div>
-                )}
-              </div>
-            )}
+                <div className="text-left mt-4">
+                  <button
+                    className="btn btn-success px-4"
+                    onClick={handleStartQuiz}
+                    disabled={hasAttempts}
+                  >
+                    Start Quiz
+                  </button>
+                  {hasAttempts && (
+                    <div className="text-danger mt-2">
+                      You have already attempted this quiz and cannot retake it.
+                    </div>
+                  )}
+                </div>
+              )}
 
             </div>
           </div>
