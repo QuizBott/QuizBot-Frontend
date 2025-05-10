@@ -23,7 +23,6 @@ const QuizStarted = () => {
   const [error, setError] = useState(null);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  // single timer for entire quiz
   const [timeLeft, setTimeLeft] = useState(0);
 
   const [userAnswers, setUserAnswers] = useState({});
@@ -33,7 +32,6 @@ const QuizStarted = () => {
       .then((res) => {
         const data = res.data;
         setQuiz(data);
-        // initialize overall timer once
         setTimeLeft(data.duration * 60);
       })
       .catch((err) => {
@@ -46,7 +44,6 @@ const QuizStarted = () => {
   useEffect(() => {
     if (loading || error) return;
     if (timeLeft <= 0) {
-      // time's up: submit immediately
       handleFinishQuiz();
       return;
     }
@@ -66,7 +63,6 @@ const QuizStarted = () => {
   const goToNextQuestion = () => {
     if (currentQuestionIndex + 1 < quiz.questions.length) {
       setCurrentQuestionIndex((i) => i + 1);
-      // do NOT reset timeLeft; uses overall timer
     }
   };
 
@@ -81,10 +77,15 @@ const QuizStarted = () => {
       })),
     };
 
-    console.log('Submitting answers:', payload);
-
     api.post('/quiz/submit', payload)
-      .then(() => navigate(`/quiz/${id}/results`))
+      .then((response) => {
+        const resultId = response.data
+        if (resultId) {
+          navigate(`/quiz/${resultId}/results`);
+        } else {
+          console.error('No result ID in response:', response.data);
+        }
+      })
       .catch((err) => {
         console.error(err);
         alert('Failed to submit quiz.');

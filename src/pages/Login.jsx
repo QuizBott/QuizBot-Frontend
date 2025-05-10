@@ -21,7 +21,6 @@ function Login() {
         password: password,
       });
 
-      console.log("Login successful", response.data);
       setError("");
       navigate("/home")
     } catch (err) {

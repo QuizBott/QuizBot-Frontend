@@ -29,9 +29,9 @@ function Navbar() {
     >
       <div className="container-fluid d-flex justify-content-between">
         <div className="d-flex align-items-center">
-          <Link to="/profilescreen" state={{ user }}>
+          <Link to="/profilescreen">
             <img
-              src={user ? user.profileImage : Logo}
+              src={Logo}
               alt="Logo"
               className="img-fluid me-2"
               style={{ width: "40px", height: "40px" }}
@@ -40,7 +40,9 @@ function Navbar() {
 
           <div className="navbar-brand d-flex flex-column">
             <span className="fw-bold fs-6">Quizzes</span>
-            <span className="fw-bold text-muted fs-6">{user ? user.username : "Loading"}</span>
+            <Link to="/profilescreen" style={{ textDecoration: "none" }}>
+              <span className="fw-bold text-muted fs-6">{user ? user.username : "Loading"}</span>
+            </Link>
           </div>
         </div>
 
@@ -75,8 +77,8 @@ function Navbar() {
             />
           </Link>
         )} */}
-      </div>
-    </nav>
+      </div >
+    </nav >
   );
 }
 export default Navbar;

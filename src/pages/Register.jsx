@@ -24,19 +24,18 @@ function Register() {
         }
 
         try {
-        const response = await api.post("/auth/register", {
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName
-        });
+            const response = await api.post("/auth/register", {
+                email: email,
+                password: password,
+                firstName: firstName,
+                lastName: lastName
+            });
 
-        console.log("Register successful", response.data);
-        setError("");
-        navigate("/")
+            setError("");
+            navigate("/")
         } catch (err) {
-        console.error("Register error:", err);
-        setError("Registration failed");
+            console.error("Register error:", err);
+            setError("Registration failed");
         }
     };
 
@@ -47,11 +46,11 @@ function Register() {
                 style={{ width: "100%", maxWidth: "400px" }}
             >
                 <h2 className="text-center mb-4"><b>Register</b></h2>
-                
+
                 {error && <div className="alert alert-danger">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                <div className="mb-3">
+                    <div className="mb-3">
                         <label htmlFor="firstName" className="form-label">
                             First Name
                         </label>

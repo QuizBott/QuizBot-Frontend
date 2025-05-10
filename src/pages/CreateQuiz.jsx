@@ -39,7 +39,6 @@ function CreateQuiz() {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
             setImage(file);
-            console.log("Image selected:", file.name);
             event.target.value = null;
         }
     };
@@ -52,7 +51,6 @@ function CreateQuiz() {
         if (event.target.files && event.target.files.length > 0) {
             const newFiles = Array.from(event.target.files);
             setDocuments(prevDocs => [...prevDocs, ...newFiles]);
-            console.log("Documents selected:", newFiles.map(f => f.name));
             event.target.value = null;
         }
     };
@@ -100,7 +98,6 @@ function CreateQuiz() {
 
         try {
             const response = await api.post("/quiz/generate/gemini", formData);
-            console.log('Quiz generation successful:', response.data);
             navigate("/edit", { state: { data: response.data } });
         } catch (error) {
             setLoading(false);

@@ -1,22 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import { useParams } from 'react-router-dom';
 
-//Data za vnes od backend
-const QuizResults = ({ quizName, correct, total}) => {  
-    const navigate = useNavigate();
+const QuizResults = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-    const handleReturnHome = () => {
-        navigate('/home');
+  const [quizAttempt, setQuizAttempt] = useState(null);
+
+  const handleReturnHome = () => {
+    navigate('/home');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/quiz/attempt/${id}`);
+        setQuizAttempt(response.data);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    quizName = 'Programming'
-    correct = 15
-    total = 20
+    fetchData();
+  }, [id]);
 
   return (
     <Container className="text-center mt-5">
-      <h2 className="fw-bold">{quizName}</h2>
+      <h2 className="fw-bold">{quizAttempt?.quizName}</h2>
 
       <Row className="justify-content-center mt-4">
         <Col md={6}>
@@ -24,7 +37,7 @@ const QuizResults = ({ quizName, correct, total}) => {
           <Card className="border-success">
             <Card.Body>
               <Card.Text className="text-start">
-                You’ve got {correct} / {total} correct answers
+                You’ve got {quizAttempt?.totalPoints.toFixed(1)} / {quizAttempt?.maxPoints.toFixed(1)} points
               </Card.Text>
             </Card.Body>
           </Card>
