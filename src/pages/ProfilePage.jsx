@@ -46,22 +46,56 @@ const ProfileScreen = () => {
 
 	const exportQuizToPDF = async (quiz) => {
 		try {
-			const response = await api.get(`/quiz/${quiz.id}`);
+
+			console.log("Exporting quiz:", quiz);
+			const response = await api.get(`/quiz/attempt/${quiz.quizAttemptId}`);
+			const data = response.data;
 
 			const doc = new jsPDF();
+			let y = 20;
+
 			doc.setFontSize(18);
-			doc.text('Quiz Result', 14, 22);
+			doc.text('Quiz Result', 14, y);
+			y += 10;
 
 			doc.setFontSize(12);
-			doc.text(`Title: ${quiz.quizName}`, 14, 40);
-			doc.text(`Tags: ${quiz.quizTags}`, 14, 50);
-			doc.text(`Score: ${quiz.points}/${quiz.maxPoints}`, 14, 60);
+			doc.text(`Quiz Name: ${data.quizName}`, 14, y += 10);
+			doc.text(`Taken At: ${new Date(data.takenAt).toLocaleString()}`, 14, y += 10);
+			doc.text(`Total Points: ${data.totalPoints} / ${data.maxPoints}`, 14, y += 10);
+			y += 10;
 
-			doc.save(`${quiz.quizName}_result.pdf`);
+			data.questions.forEach((question, index) => {
+				if (y > 270) {
+					doc.addPage();
+					y = 20;
+				}
+
+				doc.setFont(undefined, 'bold');
+				doc.text(`Q${index + 1}: ${question.questionText}`, 14, y += 10);
+				doc.setFont(undefined, 'normal');
+				doc.text(`Points: ${question.earnedPoints} / ${question.maxPoints}`, 14, y += 8);
+
+				question.answers.forEach((answer) => {
+					let text = ` - ${answer.answerText}`;
+					if (answer.selected) text += " SELECTED";
+					if (answer.correct) text += " CORRECT";
+
+					if (y > 270) {
+						doc.addPage();
+						y = 20;
+					}
+					doc.text(text, 18, y += 7);
+				});
+
+				y += 5;
+			});
+
+			doc.save(`${data.quizName}_result.pdf`);
 		} catch (err) {
 			console.error("Failed to export quiz:", err);
 		}
 	};
+
 
 	const renderQuizResults = () => (
 		<div className="px-4">
